@@ -1,0 +1,59 @@
+{
+    "name": "lerp",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "devcontainer",
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+    "shutdownAction": "stopCompose",
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "lldb.executable": "/usr/bin/lldb",
+                "files.watcherExclude": {
+                    "**/target/**": true
+                },
+                "rust-analyzer.checkOnSave.command": "clippy"
+            },
+            "extensions": [
+                "vadimcn.vscode-lldb",
+                "mutantdino.resourcemonitor",
+                "rust-lang.rust-analyzer",
+                "tamasfe.even-better-toml",
+                "serayuzgur.crates",
+                "ms-azuretools.vscode-docker",
+                "fabiospampinato.vscode-terminals",
+                "eamodio.gitlens",
+                "zxh404.vscode-proto3",
+                "esbenp.prettier-vscode",
+                "ms-kubernetes-tools.vscode-kubernetes-tools"
+            ]
+        }
+    },
+    "mounts": [
+        "source=/mnt/c,target=/mnt/c,type=bind,consistency=cached",
+        "source=${localEnv:HOME}/git/lerp,target=/workspaces/lerp-tools/lerp,type=bind,consistency=cached",
+        "source=${localEnv:HOME}/git/lerp-infra,target=/workspaces/lerp-tools/lerp-infra,type=bind,consistency=cached",
+        "source=${localEnv:HOME}/.aws,target=/root/.aws,type=bind,consistency=cached",
+        {
+            "source": "${env:HOME}${env:USERPROFILE}/.kube",
+            "target": "/usr/local/share/kube-localhost",
+            "type": "bind"
+        }
+    ],
+    "remoteEnv": {
+		"SYNC_LOCALHOST_KUBECONFIG": "true"
+	},
+    "postCreateCommand": ".devcontainer/post-create.sh",
+    "remoteUser": "root",
+    "features": {
+        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+            "enableNonRootDocker": false,
+            "moby": false
+        },
+        "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
+            "version": "latest",
+            "helm": "latest",
+            "minikube": "none"
+        },
+        "./local-features/copy-kube-config": {}
+    }
+}
